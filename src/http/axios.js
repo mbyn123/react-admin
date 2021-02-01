@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 var http = axios.create({
-    baseURL: 'https://some-domain.com/api/',
-    timeout: 1000,
+    baseURL: process.env.REACT_APP_API,
+    timeout: 5000,
     headers: {'X-Custom-Header': 'foobar'}
 });
 
@@ -17,6 +17,7 @@ http.interceptors.request.use(function (config) {
 
 // 添加响应拦截器
 http.interceptors.response.use(function (response) {
+    console.log(response)
     // 对响应数据做点什么
     return response;
 }, function (error) {

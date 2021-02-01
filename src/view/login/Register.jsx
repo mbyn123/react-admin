@@ -1,40 +1,51 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './index.less'
-import { Form, Input, Button ,Row,Col} from 'antd';
+import { Form, Input, Button, Row, Col ,message} from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { register } from '../../http/api/login'
+import CodeButton from '../../components/codeButton'
+
+
 class Register extends Component {
-    onFinish = ()=>{}
-    onSearch = ()=>{}
-    render() {
-        const {changeType} = this.props
+    async onFinish(val){
+        console.log(val)
+        const {data:res} = await register(val).catch(err=>err)
+        console.log(res)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            return
+        }
+    }
+    onSearch = () => { }
+    render () {
+        const { changeType } = this.props
 
         return (
             <div className='login-wrapper'>
                 <div className="login-box">
                     <div className="login-box-header">
                         <div className="text left">账号注册</div>
-                        <div className="text right" onClick={()=>changeType(1)}>登录</div>
-
+                        <div className="text right" onClick={() => changeType(1)}>登录</div>
                     </div>
                     <div className="login-form-wrapper">
                         <Form
                             className="login-form"
-                            initialValues={{ }}
-                            onFinish={this.onFinish()}
+                            initialValues={{}}
+                            onFinish={(e)=>this.onFinish(e)}
                         >
                             <Form.Item
                                 name="username"
                                 rules={[
                                     { required: true, message: '请输入邮箱' },
-                                    { type: 'email', message: '请输入邮箱' }
-                                    ]}
+                                    { type: 'email', message: '邮箱格式不正确' }
+                                ]}
                             >
                                 <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
                             </Form.Item>
                             <Form.Item
                                 name="password"
                                 rules={[{ required: true, message: '请输入密码' },
-                                    {min: 6, message: '密码最少6位'}]}
+                                { min: 6, message: '密码最少6位' }]}
                             >
                                 <Input
                                     prefix={<LockOutlined className="site-form-item-icon" />}
@@ -45,14 +56,15 @@ class Register extends Component {
                             <Form.Item
                                 name="passwords"
                                 rules={[{ required: true, message: '请再次输入密码' },
-                                    ({ getFieldValue }) => ({
-                                        validator(_, value) {
-                                            if (!value || getFieldValue('password') === value) {
-                                                return Promise.resolve();
-                                            }
-                                            return Promise.reject('两次输入密码不一致');
-                                        },
-                                    }),]}
+                                ({ getFieldValue }) => ({
+                                    validator (_, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject('两次密码输入不一致');
+
+                                    },
+                                }),]}
                             >
                                 <Input
                                     prefix={<LockOutlined className="site-form-item-icon" />}
@@ -73,7 +85,7 @@ class Register extends Component {
                                         />
                                     </Col>
                                     <Col span={9}>
-                                        <Button type="primary" block>获取获证码</Button>
+                                       <CodeButton></CodeButton>  
                                     </Col>
 
                                 </Row>
@@ -81,7 +93,7 @@ class Register extends Component {
                             </Form.Item>
 
                             <Form.Item>
-                                <Button type="primary" htmlType="submit"  block>注册</Button>
+                                <Button type="primary" htmlType="submit" block>注册</Button>
 
                             </Form.Item>
                         </Form>

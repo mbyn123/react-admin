@@ -1,20 +1,33 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './index.less'
-import {Form, Input, Button, Row, Col} from 'antd';
-import {UserOutlined, LockOutlined} from '@ant-design/icons';
+import { Form, Input, Button, Row, Col, message } from 'antd';
+import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { login } from '../../http/api/login'
 
 class Login extends Component {
-    onFinish = () => {
+    onFinish(val){
+        console.log(val)
+        this.getLogin(val)
     }
     onSearch = () => {
     }
 
-    componentDidMount() {
-        // console.log(this.props)
+    componentDidMount () {
+        
+
     }
 
-    render() {
-        const {changeType} = this.props
+    getLogin = async (query) => {
+        const { data: res } = await login(query).catch(err => err)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            return
+        }
+        console.log(2222, res)
+    }
+
+    render () {
+        const { changeType } = this.props
         return (
             <div className='login-wrapper'>
                 <div className="login-box">
@@ -27,35 +40,35 @@ class Login extends Component {
                         <Form
                             className="login-form"
                             initialValues={{}}
-                            onFinish={this.onFinish()}
+                            onFinish={(e)=>this.onFinish(e)}
                         >
                             <Form.Item
                                 name="username"
-                                rules={[{required: true, message: '请输入邮箱'},
-                                    {type: 'email', message: '邮箱格式不正确'}]}
+                                rules={[{ required: true, message: '请输入邮箱' },
+                                { type: 'email', message: '邮箱格式不正确' }]}
                             >
-                                <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="email"/>
+                                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
                             </Form.Item>
                             <Form.Item
                                 name="password"
-                                rules={[{required: true, message: '请输入密码'},
-                                    {min: 6, message: '密码最少6位'}
+                                rules={[{ required: true, message: '请输入密码' },
+                                { min: 6, message: '密码最少6位' }
                                 ]}
                             >
                                 <Input
-                                    prefix={<LockOutlined className="site-form-item-icon"/>}
+                                    prefix={<LockOutlined className="site-form-item-icon" />}
                                     type="password"
                                     placeholder="Password"
                                 />
                             </Form.Item>
                             <Form.Item
                                 name="code"
-                                rules={[{required: true, message: '请输入验证码'}]}
+                                rules={[{ required: true, message: '请输入验证码' }]}
                             >
                                 <Row gutter={13}>
                                     <Col span={15}>
                                         <Input
-                                            prefix={<LockOutlined className="site-form-item-icon"/>}
+                                            prefix={<LockOutlined className="site-form-item-icon" />}
                                             type="password"
                                             placeholder="验证码"
                                         />

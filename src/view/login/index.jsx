@@ -7,7 +7,7 @@ class LoginHome extends Component {
     constructor(porps) {
         super(porps);
         this.state = {
-            id: 1
+            id: 2
         }
     }
 
