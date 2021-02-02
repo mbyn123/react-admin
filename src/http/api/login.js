@@ -15,3 +15,12 @@ export const register = (data)=>{
         data
     })
 }
+
+
+export const getRegisterCode = (data)=>{
+    return http.request({
+        url:'/getSms/',
+        method:'POST',
+        data
+    })
+}

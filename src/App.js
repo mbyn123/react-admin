@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import {BrowserRouter,Switch,Route} from 'react-router-dom'
+import PrivateRouter from './router/privateRouter'
 import Login from './view/login'
 import Home from './view/home'
+
 
 class App extends Component {
     render() {
@@ -9,8 +11,8 @@ class App extends Component {
             <div>
                 <BrowserRouter>
                     <Switch>
-                        <Route component={Login} path="/" exact></Route>
-                        <Route component={Home} path="/Home" exact></Route>
+                        <Route render={()=><Login/>}  path="/" exact></Route>
+                        <PrivateRouter component={Home} path="/Home" exact/>
                     </Switch>
                 </BrowserRouter>
             </div>

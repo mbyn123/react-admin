@@ -3,6 +3,7 @@ import './index.less'
 import { Form, Input, Button, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { login } from '../../http/api/login'
+import {withRouter} from 'react-router-dom'
 
 class Login extends Component {
     onFinish(val){
@@ -24,6 +25,10 @@ class Login extends Component {
             return
         }
         console.log(2222, res)
+    }
+    get = ()=>{
+        console.log(this.props)
+        this.props.history.push('/Home')
     }
 
     render () {
@@ -74,7 +79,7 @@ class Login extends Component {
                                         />
                                     </Col>
                                     <Col span={9}>
-                                        <Button type="primary" block>获取获证码</Button>
+                                        <Button type="primary" block onClick={this.get}>获取获证码</Button>
 
                                     </Col>
 
@@ -94,4 +99,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);
