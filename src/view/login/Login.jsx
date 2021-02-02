@@ -2,57 +2,60 @@ import React, { Component } from 'react';
 import './index.less'
 import { Form, Input, Button, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { login } from '../../http/api/login'
-import {withRouter} from 'react-router-dom'
+import { login } from '@/http/api/login'
+import { withRouter } from 'react-router-dom'
+import CodeButton from '@/components/codeButton'
+import {setUserInfo} from "@/utils/session"
 
 class Login extends Component {
-    onFinish(val){
+    constructor(props) {
+        super(props)
+        this.state = {
+            username: ''
+        }
+    }
+    async onFinish (val) {
         console.log(val)
-        this.getLogin(val)
-    }
-    onSearch = () => {
-    }
-
-    componentDidMount () {
-        
-
-    }
-
-    getLogin = async (query) => {
-        const { data: res } = await login(query).catch(err => err)
+        const { data: res } = await login(val).catch(err => err)
         if (res.resCode !== 0) {
             message.error(res.message)
             return
         }
-        console.log(2222, res)
-    }
-    get = ()=>{
-        console.log(this.props)
+        setUserInfo(JSON.stringify(res.data))
+        message.success(res.message)
         this.props.history.push('/Home')
+    }
+
+
+   
+    changeUsername = (e) => {
+        this.setState({
+            username: e.target.value
+        })
     }
 
     render () {
         const { changeType } = this.props
+        const { username } = this.state
         return (
             <div className='login-wrapper'>
                 <div className="login-box">
                     <div className="login-box-header">
                         <div className="text left">登录</div>
                         <div className="text right" onClick={() => changeType(2)}>账号注册</div>
-
                     </div>
                     <div className="login-form-wrapper">
                         <Form
                             className="login-form"
                             initialValues={{}}
-                            onFinish={(e)=>this.onFinish(e)}
+                            onFinish={(e) => this.onFinish(e)}
                         >
                             <Form.Item
                                 name="username"
                                 rules={[{ required: true, message: '请输入邮箱' },
                                 { type: 'email', message: '邮箱格式不正确' }]}
                             >
-                                <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
+                                <Input onChange={(e) => this.changeUsername(e)} prefix={<UserOutlined className="site-form-item-icon" />} placeholder="email" />
                             </Form.Item>
                             <Form.Item
                                 name="password"
@@ -79,8 +82,7 @@ class Login extends Component {
                                         />
                                     </Col>
                                     <Col span={9}>
-                                        <Button type="primary" block onClick={this.get}>获取获证码</Button>
-
+                                        <CodeButton username={username} module="login"></CodeButton>
                                     </Col>
 
                                 </Row>

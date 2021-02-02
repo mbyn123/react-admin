@@ -12,14 +12,11 @@ class CodeButton extends Component {
             text: '获取获证码'
         }
     }
-    getDerivedStateFormProps(nextProps,prevState){
-        console.log(777,nextProps,prevState)
-    }
+   
      getCode = async () => {
         // console.log('1111')
         const {username,module} = this.props
         console.log(username)
-        return false
         if(!username){
             message.warning('请输入邮箱')
             return

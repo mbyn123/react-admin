@@ -1,10 +1,14 @@
 import React, { Component } from 'react'
+import "./style.less"
+import SilderBar from '@/components/silderBar'
 
- class Home extends Component {
-    render() {
+// const { Header, Content } = Layout;
+
+class Home extends Component {
+    render () {
         return (
-            <div>
-                主页
+            <div className="layout-wrapper">
+                <SilderBar></SilderBar>
             </div>
         )
     }

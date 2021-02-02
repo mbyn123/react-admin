@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {BrowserRouter,Switch,Route} from 'react-router-dom'
-import PrivateRouter from './router/privateRouter'
-import Login from './view/login'
-import Home from './view/home'
+import PrivateRouter from '@/router/privateRouter'
+import Login from '@/view/login'
+import Home from '@/view/home'
+
 
 
 class App extends Component {
@@ -11,7 +12,7 @@ class App extends Component {
             <div>
                 <BrowserRouter>
                     <Switch>
-                        <Route render={()=><Login/>}  path="/" exact></Route>
+                        <Route component={Login}  path="/" exact></Route>
                         <PrivateRouter component={Home} path="/Home" exact/>
                     </Switch>
                 </BrowserRouter>

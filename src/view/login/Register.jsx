@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import './index.less'
 import { Form, Input, Button, Row, Col, message } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { register } from '../../http/api/login'
-import CodeButton from '../../components/codeButton'
+import { register } from '@/http/api/login'
+import CodeButton from '@/components/codeButton'
 
 
 class Register extends Component {
@@ -13,7 +13,8 @@ class Register extends Component {
         super(props)
         this.formRef = React.createRef()
         this.state = {
-            username: ''
+            username: '',
+            butLoding:false
         }
     }
 
@@ -22,13 +23,22 @@ class Register extends Component {
     }
 
     async onFinish(val) {
-
+        this.setState({
+            butLoding:true
+        })
         const { data: res } = await register(val).catch(err => err)
         console.log(res)
         if (res.resCode !== 0) {
             message.error(res.message)
+            this.setState({
+                butLoding:false
+            })
             return
         }
+        message.success(res.message)
+        this.setState({
+            butLoding:false
+        })
     }
     // getCode = ()=>{
     //     console.log(this.formRef.current.getFieldValue('username'))
@@ -39,7 +49,6 @@ class Register extends Component {
 
     // }
     changeUsername = (e) => {
-    //   console.log(e)
         this.setState({
             username: e.target.value
         })
@@ -47,7 +56,7 @@ class Register extends Component {
     onSearch = () => { }
     render() {
         const { changeType } = this.props
-        const { username } = this.state
+        const { username,butLoding } = this.state
         return (
             <div className='login-wrapper'>
                 <div className="login-box">
@@ -121,7 +130,7 @@ class Register extends Component {
 
                             </Form.Item>
                             <Form.Item>
-                                <Button type="primary" htmlType="submit" block>注册</Button>
+                                <Button loading={butLoding} type="primary" htmlType="submit" block>注册</Button>
                             </Form.Item>
                         </Form>
                     </div>

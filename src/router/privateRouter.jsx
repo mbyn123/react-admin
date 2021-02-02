@@ -1,11 +1,13 @@
-import React, { Component } from 'react';
-import { Route } from 'react-router-dom'
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom'
+import { getUserInfo } from "@/utils/session"
 
-const PrivateRouter = ({ compontens: Component, ...rest }) => {
-    console.log({ ...rest })
+
+const PrivateRouter = ({ component: Component, ...rest }) => {
+    const {token} = getUserInfo()
     return (
         <Route {...rest} render={routerProps => (
-            true ? <Component {...routerProps} /> : '11111'
+            getUserInfo() && token ? <Component {...routerProps} /> : <Redirect to="/" />
         )} />
 
     )
