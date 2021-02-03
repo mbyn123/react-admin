@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
 import "./style.less"
 import SilderBar from '@/components/silderBar'
-
-// const { Header, Content } = Layout;
+import { Layout } from 'antd'
+const { Header, Content,Sider } = Layout;
 
 class Home extends Component {
-    render () {
+    render() {
         return (
-            <div className="layout-wrapper">
-                <SilderBar></SilderBar>
-            </div>
+            <Layout className="layout-wrapper">
+                <Sider className="layout-sider-wrapper"><SilderBar></SilderBar></Sider>   
+                <Layout>
+                    <Header className="layout-header-wrapper"></Header>
+                    <Content className="layout-content-wrapper"></Content>
+                </Layout>
+            </Layout>
         )
     }
 }
