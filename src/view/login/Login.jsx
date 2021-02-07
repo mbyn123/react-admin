@@ -5,7 +5,8 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { login } from '@/http/api/login'
 import { withRouter } from 'react-router-dom'
 import CodeButton from '@/components/codeButton'
-import {setUserInfo} from "@/utils/session"
+import { setUserInfo } from "@/utils/session"
+import path from "@/utils/routerConfig"
 
 class Login extends Component {
     constructor(props) {
@@ -23,11 +24,11 @@ class Login extends Component {
         }
         setUserInfo(JSON.stringify(res.data))
         message.success(res.message)
-        this.props.history.push('/Home')
+        this.props.history.push(path)
     }
 
 
-   
+
     changeUsername = (e) => {
         this.setState({
             username: e.target.value

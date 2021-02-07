@@ -150,7 +150,7 @@ module.exports = function (webpackEnv) {
                         lessOptions: {
                             javascriptEnabled: true,
                             modifyVars: { //自定义主题
-                                'primary-color': ' #E66E4E ',
+                                'primary-color': '#1890ff ',
                             },
                         }
                     }
