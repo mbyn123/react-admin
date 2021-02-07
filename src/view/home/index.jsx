@@ -6,7 +6,7 @@ import Main from "@/components/main"
 const { Header, Sider, Content } = Layout;
 
 class Home extends Component {
-    render () {
+    render() {
         return (
             <Layout className="layout-wrapper">
                 <Sider className="layout-sider-wrapper">
