@@ -2,7 +2,7 @@ const router = [
     {
         title: '控制台',
         icon: '',
-        key: '/control'
+        key: '/control/index'
     },
     {
         title: '用户管理',
@@ -16,19 +16,19 @@ const router = [
     {
         title: '部门管理',
         icon: 'bars',
-        key: '/navigation',
+        key: '/department',
         child: [
-            { key: '/navigation/dropdown', title: '部门列表', icon: '' },
-            { key: '/navigation/menu', title: '添加部门', icon: '' },
+            { key: '/department/list', title: '部门列表', icon: '' },
+            { key: '/department/add', title: '添加部门', icon: '' },
         ]
     },
     {
         title: '职位管理',
-        icon: 'edit',
-        key: '/entry',
+        icon: 'position',
+        key: '/position',
         child: [
-            { key: '/entry/base-form', title: '职位列表', icon: '' },
-            { key: '/entry/step-form', title: '添加职位', icon: '' },
+            { key: '/position/list', title: '职位列表', icon: '' },
+            { key: '/position/add', title: '添加职位', icon: '' },
         ]
     },
     {

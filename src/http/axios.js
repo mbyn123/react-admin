@@ -1,14 +1,15 @@
 import axios from 'axios'
+import {getUserInfo} from "@/utils/session"
 
 var http = axios.create({
     baseURL: process.env.REACT_APP_API,
     timeout: 5000,
-    headers: {'X-Custom-Header': 'foobar'}
 });
 
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {
-    // 在发送请求之前做些什么
+    config.headers['Token'] =  getUserInfo().token
+    config.headers['Username'] = getUserInfo().username
     return config;
 }, function (error) {
     // 对请求错误做些什么
