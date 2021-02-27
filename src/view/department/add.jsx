@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button, Input, Radio, InputNumber, message } from "antd"
-import { departmentAdd } from "@/http/api/department"
+import { departmentAdd, departmentDetailed, departmentEdit } from "@/http/api/department"
 
 const layout = {
     labelCol: { span: 2 },
@@ -8,20 +8,70 @@ const layout = {
 };
 
 class DepartmentAdd extends Component {
+    constructor(props) {
+        super(props)
+        this.departmentAddRef = React.createRef()
+        this.state = {
+            id: '',
+            butLoading: false
+        }
 
-    onSubmit = async (e) => {
-        console.log(e)
-        const { data: res } = await departmentAdd(e).catch(err => err)
+    }
+    componentDidMount () {
+        console.log(this.props.location.state)
+        if (this.props.location.state) {
+            let { id } = this.props.location.state
+            this.getDepartmentDetailed(id)
+            this.setState({ id })
+        }
+
+    }
+    getDepartmentDetailed = async (id) => {
+        const { data: res } = await departmentDetailed({ id }).catch(err => err)
         if (res.resCode !== 0) {
             message.error(res.message)
             return
         }
-        message.success(res.message)
+        this.departmentAddRef.current.setFieldsValue(res.data)
+    }
+    onAdd = async (query) => {
+        this.setButLoading(true)
+
+        const { data: res } = await departmentAdd(query).catch(err => err)
+        if (res.resCode !== 0) {
+            this.setButLoading(false)
+            message.error(res.message)
+            return
+        }
+        this.setButLoading(false)
+        this.departmentAddRef.current.resetFields()
+        message.success('添加成功')
+    }
+    onEdit = async (query) => {
+        this.setButLoading(true)
+        query.id = this.state.id
+        const { data: res } = await departmentEdit(query).catch(err => err)
+        if (res.resCode !== 0) {
+            this.setButLoading(false)
+            message.error(res.message)
+            return
+        }
+        this.setButLoading(false)
+        message.success('编辑成功')
+    }
+    onSubmit = async (e) => {
+        this.state.id ? this.onEdit(e) : this.onAdd(e)
+    }
+    setButLoading = (val) => {
+        this.setState({
+            butLoading: val
+        })
     }
     render () {
+        let { butLoading } = this.state
         return (
             <div>
-                <Form {...layout} onFinish={this.onSubmit} initialValues={{ status: false, number: 0 }}>
+                <Form {...layout} onFinish={this.onSubmit} ref={this.departmentAddRef} initialValues={{ name: '', status: false, number: 0, content: '' }}>
                     <Form.Item
                         label="部门名称"
                         name="name"
@@ -54,10 +104,10 @@ class DepartmentAdd extends Component {
                         <Input.TextArea />
                     </Form.Item>
                     <Form.Item style={{ textAlign: 'right' }}>
-                        <Button type="primary" htmlType="submit">保存</Button>
+                        <Button type="primary" htmlType="submit" loading={butLoading}>保存</Button>
                     </Form.Item>
                 </Form>
-            </div>
+            </div >
         );
     }
 }
