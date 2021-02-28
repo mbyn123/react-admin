@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Input, Radio, InputNumber, message } from "antd"
 import { departmentAdd, departmentDetailed, departmentEdit } from "@/http/api/department"
+import CustomForm from '@/components/CustomForm'
 
 const layout = {
     labelCol: { span: 2 },
@@ -13,12 +14,40 @@ class DepartmentAdd extends Component {
         this.departmentAddRef = React.createRef()
         this.state = {
             id: '',
-            butLoading: false
+            butLoading: false,
+            config: [
+                {
+                    type: 'Input',
+                    label: "部门名称",
+                    name: "name",
+                    required:true
+                },
+                {
+                    type: 'InputNumber',
+                    label: "人员数量",
+                    name: "number",
+                    min: 0,
+                    max: 100,
+                    required:true
+                },
+                {
+                    type: 'Radio',
+                    label: "禁启用",
+                    name: "status",
+                    options: [{ label: '禁用', value: 1 }, { label: '启用', value: 0 }],
+                    required:true
+                },
+                {
+                    type: 'TextArea',
+                    label: "描述",
+                    name: "content",
+                    required: true
+                }
+            ]
         }
 
     }
     componentDidMount () {
-        console.log(this.props.location.state)
         if (this.props.location.state) {
             let { id } = this.props.location.state
             this.getDepartmentDetailed(id)
@@ -68,10 +97,11 @@ class DepartmentAdd extends Component {
         })
     }
     render () {
-        let { butLoading } = this.state
+        let { butLoading, config } = this.state
         return (
             <div>
-                <Form {...layout} onFinish={this.onSubmit} ref={this.departmentAddRef} initialValues={{ name: '', status: false, number: 0, content: '' }}>
+                <CustomForm config={config}></CustomForm>
+                <Form {...layout} onFinish={this.onSubmit} ref={this.departmentAddRef} initialValues={{ name: '', status: false, number: 10, content: '11' }}>
                     <Form.Item
                         label="部门名称"
                         name="name"
