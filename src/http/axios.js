@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {getUserInfo} from "@/utils/session"
+import { getUserInfo } from "@/utils/session"
 
 var http = axios.create({
     baseURL: process.env.REACT_APP_API,
@@ -8,8 +8,8 @@ var http = axios.create({
 
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {
-    config.headers['Token'] =  getUserInfo().token
-    config.headers['Username'] = getUserInfo().username
+    config.headers['Token'] = getUserInfo() && getUserInfo().token
+    config.headers['Username'] = getUserInfo() && getUserInfo().username
     return config;
 }, function (error) {
     // 对请求错误做些什么

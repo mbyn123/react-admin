@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, message, Switch } from "antd"
+import { Button, message, Switch } from "antd"
 import { setDepartmentStatus } from "@/http/api/department"
 import { Link } from "react-router-dom"
 
@@ -44,13 +44,30 @@ class DepartmentList extends Component {
                         )
                     },
                 ],
+                searchConfig: {
+                    formItem: [
+                        {
+                            type: 'Input',
+                            label: "部门名称",
+                            name: "name",
+                        },
+                        {
+                            type: 'Select',
+                            label: "禁启项",
+                            name: "status",
+                            options: [
+                                { label: '禁用', value: false },
+                                { label: '启用', value: true }
+                            ]
+                        },
+                    ]
+                }
             },
         }
     }
     // 获取子组件实例
     getChildRef = (ref) => {
         this.tableRef = ref
-        console.log(this.tableRef)
     }
 
     changeSwitch = async (status, id) => {
@@ -63,7 +80,7 @@ class DepartmentList extends Component {
         this.tableRef.getDataList()
     }
 
-  
+
     render () {
         let { config } = this.state
         return <CustomTable getChildRef={this.getChildRef} config={config}></CustomTable>

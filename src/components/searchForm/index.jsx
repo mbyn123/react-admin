@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, TextArea } from "antd"
+import { Form, Button, Input, Radio, InputNumber, Select } from "antd"
 
 
-const layout = {
-    labelCol: { span: 2 },
-    wrapperCol: { span: 10 },
-};
-
-class CustomForm extends Component {
+const width = '200px'
+class SearchForm extends Component {
     constructor(props) {
         super(props)
         this.form = React.createRef()
@@ -20,15 +16,20 @@ class CustomForm extends Component {
             }
         }
     }
-    
-    // 监听props是否变化
-    componentDidUpdate(){
-       if(this.props.config.setFieldValue){
-           this.form.current.setFieldsValue(this.props.config.setFieldValue)
-       }
-   }
+
+
     onFinish = (e) => {
-        this.props.onSubmit(e)
+        const searchValue = {}
+        for (let key in e) {
+            if (e[key] !== undefined && e[key] !== '') {
+                searchValue[key] = e[key]
+            }
+        }
+        this.props.onSubmit(searchValue)
+    }
+
+    onReset = () => {
+        this.form.current.resetFields()
     }
 
     marked = (item) => {
@@ -49,24 +50,24 @@ class CustomForm extends Component {
 
     elemInput = (item) => {
         return (
-            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <Input placeholder={item.placeholder || this.marked(item)} style={{ width: '100%' }} />
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name} >
+                <Input placeholder={item.placeholder || this.marked(item)} style={{ width: width }} />
             </Form.Item>
         )
     }
 
     elemTextArea = (item) => {
         return (
-            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <Input.TextArea placeholder={item.placeholder || this.marked(item)} style={{ width: '100%' }} />
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name} >
+                <Input.TextArea placeholder={item.placeholder || this.marked(item)} style={{ width: width }} />
             </Form.Item>
         )
     }
 
     elemInputNumber = (item) => {
         return (
-            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <InputNumber min={item.min} max={item.max} placeholder={item.placeholder || this.marked(item)} style={{ width: '100%' }} />
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name} >
+                <InputNumber min={item.min} max={item.max} placeholder={item.placeholder || this.marked(item)} style={{ width: width }} />
             </Form.Item>
         )
     }
@@ -74,13 +75,27 @@ class CustomForm extends Component {
     elemRadio = (item) => {
         return (
             <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <Radio.Group>
+                <Radio.Group style={{ width: width }}>
                     {
                         item.options && item.options.map(elem => {
                             return <Radio value={elem.value} key={elem.value}>{elem.label}</Radio>
                         })
                     }
                 </Radio.Group>
+            </Form.Item>
+        )
+    }
+
+    elemSelect = (item) => {
+        return (
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
+                <Select style={{ width: width }}>
+                    {
+                        item.options && item.options.map(elem => {
+                            return <Select.Option value={elem.value} key={elem.value}>{elem.label}</Select.Option>
+                        })
+                    }
+                </Select>
             </Form.Item>
         )
     }
@@ -94,18 +109,20 @@ class CustomForm extends Component {
             item.type === 'InputNumber' && FormItemList.push(this.elemInputNumber(item))
             item.type === 'Radio' && FormItemList.push(this.elemRadio(item))
             item.type === 'TextArea' && FormItemList.push(this.elemTextArea(item))
+            item.type === 'Select' && FormItemList.push(this.elemSelect(item))
         })
         return FormItemList
     }
 
     render () {
-        let { initialValues } = this.props.config
+        let { style } = this.props
         return (
             <div>
-                <Form {...layout} ref={this.form} initialValues={initialValues} onFinish={this.onFinish}>
+                <Form layout="inline" ref={this.form} onFinish={this.onFinish} style={style}>
                     {this.initialize()}
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">保存</Button>
+                    <Form.Item className="inline-button">
+                        <Button type="primary" htmlType="submit">搜索</Button>
+                        <Button type="default" onClick={this.onReset}>重置</Button>
                     </Form.Item>
                 </Form>
             </div>
@@ -113,4 +130,4 @@ class CustomForm extends Component {
     }
 }
 
-export default CustomForm;
+export default SearchForm;

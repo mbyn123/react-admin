@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Form, message, Modal, Spin,Input } from "antd"
+import { message, Modal, Spin } from "antd"
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import requestUrl from "@/http/api/requestUrl"
 import { requestData } from "@/http/api/comm"
 import TableComponent from '@/components/CustomTable/table'
+import SearchForm from '@/components/searchForm'
 
 class CustomTable extends Component {
     constructor(props) {
@@ -16,11 +17,11 @@ class CustomTable extends Component {
             total: 0,
             ids: '',
             loading: false,
-            name: '',
+            searchValue: {},
             data: []
         }
     }
-
+ 
     componentDidMount () {
         this.getDataList()
         this.props.getChildRef(this)
@@ -29,15 +30,25 @@ class CustomTable extends Component {
     getDataList = async () => {
         this.setLoading(true)
         let { queryUrl } = this.props.config
-        let { pagination, name } = this.state
+        let { pagination, searchValue } = this.state
         let query = {
             url: requestUrl[queryUrl],
             method: 'POST',
-            data: Object.assign({ name }, {
+            data: {
                 pageNumber: pagination.current,
                 pageSize: pagination.pageSize,
-            })
+            }
         }
+        // 判断对象是否为空 方法1
+        if(Object.keys(searchValue).length !==0){
+            for(let key in searchValue){
+                query.data[key] = searchValue[key]
+            }
+        }
+        // 判断对象是否为空 方法2
+        // if(JSON.stringify(searchValue) !== '{}'){}
+
+
         const { data: res } = await requestData(query).catch(err => err)
         if (res.resCode !== 0) {
             message.error(res.message)
@@ -97,25 +108,23 @@ class CustomTable extends Component {
         });
     }
 
-    onSearch = (e) => {
-        this.setState({ name: e.name })
-        this.getDataList()
+    onSearch = (searchValue) => {
+        this.setState({
+            searchValue,
+            pagination: { current: 1,pageSize: 10}
+        },()=>{
+            this.getDataList()
+        })
+        
     }
 
     render () {
-        let { columns, rowKey, selection } = this.props.config
+        let { columns, rowKey, selection, searchConfig } = this.props.config
         let { total, pagination, ids, data, loading } = this.state
         const rowSelection = { onChange: this.changeCheckbox }
         return (
             <Spin tip="Loading..." spinning={loading} size="large">
-                <Form layout="inline" initialValues={{ name: '' }} onFinish={this.onSearch} className="margin-bottom">
-                    <Form.Item label="部门名称" name="name">
-                        <Input placeholder="请输入部门名称"></Input>
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit">搜索</Button>
-                    </Form.Item>
-                </Form>
+                <SearchForm config={searchConfig} onSubmit={this.onSearch} style={{ margin: '20px 0' }}></SearchForm>
                 <TableComponent
                     selection={selection}
                     rowSelection={rowSelection}

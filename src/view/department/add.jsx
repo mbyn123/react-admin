@@ -1,49 +1,52 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, message } from "antd"
+import { message } from "antd"
 import { departmentAdd, departmentDetailed, departmentEdit } from "@/http/api/department"
 import CustomForm from '@/components/CustomForm'
 
-const layout = {
-    labelCol: { span: 2 },
-    wrapperCol: { span: 10 },
-};
 
 class DepartmentAdd extends Component {
     constructor(props) {
         super(props)
-        this.departmentAddRef = React.createRef()
         this.state = {
             id: '',
             butLoading: false,
-            config: [
-                {
-                    type: 'Input',
-                    label: "部门名称",
-                    name: "name",
-                    required:true
+            config: {
+                initialValues: {
+                    number: 0,
+                    status: true
                 },
-                {
-                    type: 'InputNumber',
-                    label: "人员数量",
-                    name: "number",
-                    min: 0,
-                    max: 100,
-                    required:true
-                },
-                {
-                    type: 'Radio',
-                    label: "禁启用",
-                    name: "status",
-                    options: [{ label: '禁用', value: 1 }, { label: '启用', value: 0 }],
-                    required:true
-                },
-                {
-                    type: 'TextArea',
-                    label: "描述",
-                    name: "content",
-                    required: true
-                }
-            ]
+                setFieldValue: {},
+                formItem: [
+                    {
+                        type: 'Input',
+                        label: "部门名称",
+                        name: "name",
+                        required: true
+                    },
+                    {
+                        type: 'InputNumber',
+                        label: "人员数量",
+                        name: "number",
+                        min: 0,
+                        max: 100,
+                        required: true
+                    },
+                    {
+                        type: 'Radio',
+                        label: "禁启用",
+                        name: "status",
+                        options: [{ label: '禁用', value: false }, { label: '启用', value: true }],
+                        required: true
+                    },
+                    {
+                        type: 'TextArea',
+                        label: "描述",
+                        name: "content",
+                        required: true
+                    }
+                ]
+            },
+
         }
 
     }
@@ -61,11 +64,14 @@ class DepartmentAdd extends Component {
             message.error(res.message)
             return
         }
-        this.departmentAddRef.current.setFieldsValue(res.data)
+        this.setState({
+            config: {
+                ...this.state.config, setFieldValue: res.data
+            }
+        })
     }
     onAdd = async (query) => {
         this.setButLoading(true)
-
         const { data: res } = await departmentAdd(query).catch(err => err)
         if (res.resCode !== 0) {
             this.setButLoading(false)
@@ -73,7 +79,6 @@ class DepartmentAdd extends Component {
             return
         }
         this.setButLoading(false)
-        this.departmentAddRef.current.resetFields()
         message.success('添加成功')
     }
     onEdit = async (query) => {
@@ -89,6 +94,7 @@ class DepartmentAdd extends Component {
         message.success('编辑成功')
     }
     onSubmit = async (e) => {
+        console.log(4444,e)
         this.state.id ? this.onEdit(e) : this.onAdd(e)
     }
     setButLoading = (val) => {
@@ -100,43 +106,7 @@ class DepartmentAdd extends Component {
         let { butLoading, config } = this.state
         return (
             <div>
-                <CustomForm config={config}></CustomForm>
-                <Form {...layout} onFinish={this.onSubmit} ref={this.departmentAddRef} initialValues={{ name: '', status: false, number: 10, content: '11' }}>
-                    <Form.Item
-                        label="部门名称"
-                        name="name"
-                        rules={[{ required: true, message: '请输入部门名称' }]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        label="人员数量"
-                        name="number"
-                        rules={[{ required: true, message: '请输入人员数量' }]}
-                    >
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                    </Form.Item>
-                    <Form.Item
-                        label="禁启用"
-                        name="status"
-                        rules={[{ required: true, message: '请选择禁启用项' }]}
-                    >
-                        <Radio.Group>
-                            <Radio value={false}>禁用</Radio>
-                            <Radio value={true}>启用</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                        label="描述"
-                        name="content"
-                        rules={[{ required: true, message: '请输入描述' }]}
-                    >
-                        <Input.TextArea />
-                    </Form.Item>
-                    <Form.Item style={{ textAlign: 'right' }}>
-                        <Button type="primary" htmlType="submit" loading={butLoading}>保存</Button>
-                    </Form.Item>
-                </Form>
+                <CustomForm config={config} onSubmit={this.onSubmit}></CustomForm>
             </div >
         );
     }
