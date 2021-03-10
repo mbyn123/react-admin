@@ -21,10 +21,10 @@ class CustomTable extends Component {
             data: []
         }
     }
- 
+
     componentDidMount () {
         this.getDataList()
-        this.props.getChildRef(this)
+        this.props.getChildRef &&this.props.getChildRef(this)
     }
 
     getDataList = async () => {
@@ -40,8 +40,8 @@ class CustomTable extends Component {
             }
         }
         // 判断对象是否为空 方法1
-        if(Object.keys(searchValue).length !==0){
-            for(let key in searchValue){
+        if (Object.keys(searchValue).length !== 0) {
+            for (let key in searchValue) {
                 query.data[key] = searchValue[key]
             }
         }
@@ -111,11 +111,10 @@ class CustomTable extends Component {
     onSearch = (searchValue) => {
         this.setState({
             searchValue,
-            pagination: { current: 1,pageSize: 10}
-        },()=>{
+            pagination: { current: 1, pageSize: 10 }
+        }, () => {
             this.getDataList()
         })
-        
     }
 
     render () {
@@ -124,7 +123,7 @@ class CustomTable extends Component {
         const rowSelection = { onChange: this.changeCheckbox }
         return (
             <Spin tip="Loading..." spinning={loading} size="large">
-                <SearchForm config={searchConfig} onSubmit={this.onSearch} style={{ margin: '20px 0' }}></SearchForm>
+                <SearchForm config={searchConfig  || {}} onSubmit={this.onSearch} style={{ margin: '20px 0' }}></SearchForm>
                 <TableComponent
                     selection={selection}
                     rowSelection={rowSelection}

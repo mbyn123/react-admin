@@ -118,13 +118,17 @@ class SearchForm extends Component {
         let { style } = this.props
         return (
             <div>
-                <Form layout="inline" ref={this.form} onFinish={this.onFinish} style={style}>
-                    {this.initialize()}
-                    <Form.Item className="inline-button">
-                        <Button type="primary" htmlType="submit">搜索</Button>
-                        <Button type="default" onClick={this.onReset}>重置</Button>
-                    </Form.Item>
-                </Form>
+                {
+                    this.props.config.formItem && (
+                        <Form layout="inline" ref={this.form} onFinish={this.onFinish} style={style}>
+                            {this.initialize()}
+                            <Form.Item className="inline-button">
+                                <Button type="primary" htmlType="submit">搜索</Button>
+                                <Button type="default" onClick={this.onReset}>重置</Button>
+                            </Form.Item>
+                        </Form>
+                    )
+                }
             </div>
         );
     }

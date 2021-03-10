@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { message } from "antd"
+import { message,Spin } from "antd"
 import { departmentAdd, departmentDetailed, departmentEdit } from "@/http/api/department"
 import CustomForm from '@/components/CustomForm'
 
@@ -9,7 +9,6 @@ class DepartmentAdd extends Component {
         super(props)
         this.state = {
             id: '',
-            butLoading: false,
             config: {
                 initialValues: {
                     number: 0,
@@ -94,7 +93,6 @@ class DepartmentAdd extends Component {
         message.success('编辑成功')
     }
     onSubmit = async (e) => {
-        console.log(4444,e)
         this.state.id ? this.onEdit(e) : this.onAdd(e)
     }
     setButLoading = (val) => {
@@ -103,11 +101,11 @@ class DepartmentAdd extends Component {
         })
     }
     render () {
-        let { butLoading, config } = this.state
+        let { config } = this.state
         return (
-            <div>
+            <Spin >
                 <CustomForm config={config} onSubmit={this.onSubmit}></CustomForm>
-            </div >
+            </Spin >
         );
     }
 }

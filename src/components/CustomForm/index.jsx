@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, TextArea } from "antd"
+import { Form, Button, Input, Radio, InputNumber, Spin, message } from "antd"
+import { requestData } from "@/http/api/comm"
+import requestUrl from "@/http/api/requestUrl"
 
 
 const layout = {
@@ -17,18 +19,42 @@ class CustomForm extends Component {
                 'TextArea': '请输入',
                 'InputNumber': '请输入',
                 'Radio': '请选择'
-            }
+            },
+            loading: false
         }
     }
-    
+
     // 监听props是否变化
-    componentDidUpdate(){
-       if(this.props.config.setFieldValue){
-           this.form.current.setFieldsValue(this.props.config.setFieldValue)
-       }
-   }
+    componentDidUpdate () {
+        if (this.props.config.setFieldValue) {
+            this.form.current.setFieldsValue(this.props.config.setFieldValue)
+        }
+    }
     onFinish = (e) => {
-        this.props.onSubmit(e)
+        if (this.props.onSubmit) {
+            this.props.onSubmit(e)
+            return
+        }
+        this.uploadData(e)
+    }
+
+    uploadData = async (val) => {
+        this.setState({ loading: true })
+        let { queryUrl } = this.props.config
+        let query = {
+            url: requestUrl[queryUrl],
+            method: 'POST',
+            data: val
+        }
+        const {data:res} = await requestData(query).catch(err => err)
+        console.log(res)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            this.setState({ loading: false })
+            return
+        }
+        message.success(res.message)
+        this.setState({ loading: false })
     }
 
     marked = (item) => {
@@ -101,14 +127,14 @@ class CustomForm extends Component {
     render () {
         let { initialValues } = this.props.config
         return (
-            <div>
+            <Spin tip="Loading..." spinning={this.state.loading} size="large">
                 <Form {...layout} ref={this.form} initialValues={initialValues} onFinish={this.onFinish}>
                     {this.initialize()}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">保存</Button>
                     </Form.Item>
                 </Form>
-            </div>
+            </Spin>
         );
     }
 }
