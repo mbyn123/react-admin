@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { message,Spin } from "antd"
-import { departmentAdd, departmentDetailed, departmentEdit } from "@/http/api/department"
+import { message, Spin } from "antd"
 import CustomForm from '@/components/CustomForm'
-
+import { requestData } from "@/http/api/comm"
+import requestUrl from "@/http/api/requestUrl"
 
 class DepartmentAdd extends Component {
     constructor(props) {
@@ -45,11 +45,11 @@ class DepartmentAdd extends Component {
                     }
                 ]
             },
-
+            butLoading: false
         }
 
     }
-    componentDidMount () {
+    componentDidMount() {
         if (this.props.location.state) {
             let { id } = this.props.location.state
             this.getDepartmentDetailed(id)
@@ -58,7 +58,7 @@ class DepartmentAdd extends Component {
 
     }
     getDepartmentDetailed = async (id) => {
-        const { data: res } = await departmentDetailed({ id }).catch(err => err)
+        const { data: res } = await requestData({ url: requestUrl['departmentDetailed'], data: { id } }).catch(err => err)
         if (res.resCode !== 0) {
             message.error(res.message)
             return
@@ -71,7 +71,7 @@ class DepartmentAdd extends Component {
     }
     onAdd = async (query) => {
         this.setButLoading(true)
-        const { data: res } = await departmentAdd(query).catch(err => err)
+        const { data: res } = await requestData({ url: requestUrl['departmentAdd'], data: query }).catch(err => err)
         if (res.resCode !== 0) {
             this.setButLoading(false)
             message.error(res.message)
@@ -83,7 +83,7 @@ class DepartmentAdd extends Component {
     onEdit = async (query) => {
         this.setButLoading(true)
         query.id = this.state.id
-        const { data: res } = await departmentEdit(query).catch(err => err)
+        const { data: res } = await requestData({ url: requestUrl['departmentEdit'], data: query }).catch(err => err)
         if (res.resCode !== 0) {
             this.setButLoading(false)
             message.error(res.message)
@@ -100,10 +100,10 @@ class DepartmentAdd extends Component {
             butLoading: val
         })
     }
-    render () {
-        let { config } = this.state
+    render() {
+        let { config, butLoading } = this.state
         return (
-            <Spin >
+            <Spin spinning={butLoading}>
                 <CustomForm config={config} onSubmit={this.onSubmit}></CustomForm>
             </Spin >
         );

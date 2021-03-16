@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Button, message, Switch } from "antd"
-import { setDepartmentStatus } from "@/http/api/department"
 import { Link } from "react-router-dom"
-
+import { requestData } from "@/http/api/comm"
+import requestUrl from "@/http/api/requestUrl"
 import CustomTable from '@/components/CustomTable'
 
 class DepartmentList extends Component {
@@ -71,7 +71,10 @@ class DepartmentList extends Component {
     }
 
     changeSwitch = async (status, id) => {
-        const { data: res } = await setDepartmentStatus({ id, status }).catch(err => err)
+        const { data: res } = await requestData({
+            url: requestUrl['departmentStatus'],
+            data: { id, status }
+        }).catch(err => err)
         if (res.resCode !== 0) {
             message.error(res.message)
             return
@@ -81,7 +84,7 @@ class DepartmentList extends Component {
     }
 
 
-    render () {
+    render() {
         let { config } = this.state
         return <CustomTable getChildRef={this.getChildRef} config={config}></CustomTable>
     }

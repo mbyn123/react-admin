@@ -1,29 +1,38 @@
 import React, { Component } from 'react';
 import CustomForm from '@/components/CustomForm'
+import { requestData } from "@/http/api/comm"
+import requestUrl from "@/http/api/requestUrl"
+import { message } from "antd"
 
 
 class PositionAdd extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: '',
             config: {
-                queryUrl:'positionAdd',
+                queryUrl: 'positionAdd',
                 initialValues: {
                     status: false
                 },
                 setFieldValue: {},
+                selectComponent: 'parentId',
+                editKey: '',
                 formItem: [
+                    {
+                        type: 'SelectComponent',
+                        label: "部门",
+                        name: "parentId",
+                        required: true,
+                        url: 'departmentListAll',
+                        labelInValue: {
+                            label: 'name',
+                            value: 'id'
+                        }
+                    },
                     {
                         type: 'Input',
                         label: "职位名称",
                         name: "jobName",
-                        required: true
-                    },
-                    {
-                        type: 'Input',
-                        label: "部门id",
-                        name: "parentId",
                         required: true
                     },
                     {
@@ -45,14 +54,38 @@ class PositionAdd extends Component {
         }
 
     }
+    componentDidMount() {
+        if (this.props.location.state) {
+            let { id } = this.props.location.state
+            this.getDepartmentDetailed(id)
+        }
 
-    render () {
+    }
+    getDepartmentDetailed = async (id) => {
+        const { data: res } = await requestData({ url: requestUrl['positionDetailed'], data: { id } }).catch(err => err)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            return
+        }
+        this.setState({
+            config: {
+                ...this.state.config,
+                setFieldValue: res.data,
+                queryUrl: 'positionEdit',
+                editKey: 'jobId'
+            }
+        })
+    }
+
+
+
+    render() {
         let { config } = this.state
-        return (
-            <div>
-                <CustomForm config={config}></CustomForm>
-            </div>
-        );
+        return <CustomForm config={config}></CustomForm>
+
+
+
+
     }
 }
 
