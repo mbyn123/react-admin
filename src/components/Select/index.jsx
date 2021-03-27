@@ -18,6 +18,7 @@ class Selects extends PureComponent {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
+        
         let { name, value } = nextProps
         if (Object.prototype.toString.call(value) === '[object Object]') {
             value = value[name]

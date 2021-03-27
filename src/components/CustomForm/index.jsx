@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, Spin, message } from "antd"
+import { Form, Button, Input, Radio, InputNumber, Spin, message, Select } from "antd"
 import { requestData } from "@/http/api/comm"
 import requestUrl from "@/http/api/requestUrl"
-
+import Selects from '@/components/Select'
 
 const layout = {
     labelCol: { span: 2 },
@@ -18,7 +18,10 @@ class CustomForm extends Component {
                 'Input': '请输入',
                 'TextArea': '请输入',
                 'InputNumber': '请输入',
-                'Radio': '请选择'
+                'Radio': '请选择',
+                'Select': '请选择',
+                'SelectComponent': '请选择',
+                'Slot': '请选择'
             },
             loading: false
         }
@@ -30,23 +33,31 @@ class CustomForm extends Component {
             this.form.current.setFieldsValue(this.props.config.setFieldValue)
         }
     }
-    onFinish = (e) => {
+    onFinish = async (val) => {
+        let key = this.props.config.selectComponent
+
+        if (key && val[key] && Object.prototype.toString.call(val[key]) === '[object Object]') {
+            let value = val[key]
+            delete val[key]
+            val = Object.assign(value, val)
+        }
+
         if (this.props.onSubmit) {
-            this.props.onSubmit(e)
+            this.props.onSubmit(val)
             return
         }
-        this.uploadData(e)
-    }
 
-    uploadData = async (val) => {
         this.setState({ loading: true })
-        let { queryUrl } = this.props.config
+        let { queryUrl, editKey, setFieldValue } = this.props.config
         let query = {
             url: requestUrl[queryUrl],
             method: 'POST',
             data: val
         }
-        const {data:res} = await requestData(query).catch(err => err)
+        if (editKey) {
+            query.data[editKey] = setFieldValue[editKey]
+        }
+        const { data: res } = await requestData(query).catch(err => err)
         console.log(res)
         if (res.resCode !== 0) {
             message.error(res.message)
@@ -56,6 +67,8 @@ class CustomForm extends Component {
         message.success(res.message)
         this.setState({ loading: false })
     }
+
+
 
     marked = (item) => {
         return this.state.hintType[item.type] + item.label
@@ -71,6 +84,13 @@ class CustomForm extends Component {
             rules = rules.concat(item.rules)
         }
         return rules
+    }
+
+    checkPrice = (rule, value) => {
+        if (!value) {
+            return Promise.reject(new Error('请选择'));
+        }
+        return Promise.resolve();
     }
 
     elemInput = (item) => {
@@ -111,6 +131,38 @@ class CustomForm extends Component {
         )
     }
 
+    elemSelect = (item) => {
+        return (
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
+                <Select >
+                    {
+                        item.options && item.options.map(elem => {
+                            return <Select.Option value={elem.value} key={elem.value}>{elem.label}</Select.Option>
+                        })
+                    }
+                </Select >
+            </Form.Item>
+        )
+    }
+
+    elemSelectComponent = (item) => {
+
+        return (
+            <Form.Item label={item.label} name={item.name} rules={[{ required: true, validator: this.checkPrice }]} key={item.name}>
+                <Selects name={item.name} labelInValue={item.labelInValue} url={item.url}></Selects>
+            </Form.Item>
+        )
+    }
+
+    elemSolt = (item) => {
+        return (
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
+                {this.props.children && Array.isArray(this.props.children) ? this.props.children.filter(elem => elem.ref === item.slotName)[0] : this.props.children}
+            </Form.Item>
+        )
+    }
+
+
     initialize = () => {
         let { formItem } = this.props.config
         if (!formItem || (formItem && formItem.length === 0)) { return false }
@@ -120,6 +172,9 @@ class CustomForm extends Component {
             item.type === 'InputNumber' && FormItemList.push(this.elemInputNumber(item))
             item.type === 'Radio' && FormItemList.push(this.elemRadio(item))
             item.type === 'TextArea' && FormItemList.push(this.elemTextArea(item))
+            item.type === 'Select' && FormItemList.push(this.elemSelect(item))
+            item.type === 'SelectComponent' && FormItemList.push(this.elemSelectComponent(item))
+            item.type === 'Slot' && FormItemList.push(this.elemSolt(item))
         })
         return FormItemList
     }
