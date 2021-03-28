@@ -3,6 +3,7 @@ import { Form, Button, Input, Radio, InputNumber, Spin, message, Select } from "
 import { requestData } from "@/http/api/comm"
 import requestUrl from "@/http/api/requestUrl"
 import Selects from '@/components/Select'
+import UploadFile from '@/components/upload'
 
 const layout = {
     labelCol: { span: 2 },
@@ -21,7 +22,8 @@ class CustomForm extends Component {
                 'Radio': '请选择',
                 'Select': '请选择',
                 'SelectComponent': '请选择',
-                'Slot': '请选择'
+                'Slot': '请选择',
+                'Upload': '请上传'
             },
             loading: false
         }
@@ -146,7 +148,6 @@ class CustomForm extends Component {
     }
 
     elemSelectComponent = (item) => {
-
         return (
             <Form.Item label={item.label} name={item.name} rules={[{ required: true, validator: this.checkPrice }]} key={item.name}>
                 <Selects name={item.name} labelInValue={item.labelInValue} url={item.url}></Selects>
@@ -154,10 +155,18 @@ class CustomForm extends Component {
         )
     }
 
-    elemSolt = (item) => {
+    elemSoltComponent = (item) => {
         return (
             <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
                 {this.props.children && Array.isArray(this.props.children) ? this.props.children.filter(elem => elem.ref === item.slotName)[0] : this.props.children}
+            </Form.Item>
+        )
+    }
+
+    elemUploadComponent = (item) => {
+        return (
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
+                <UploadFile></UploadFile>            
             </Form.Item>
         )
     }
@@ -174,7 +183,8 @@ class CustomForm extends Component {
             item.type === 'TextArea' && FormItemList.push(this.elemTextArea(item))
             item.type === 'Select' && FormItemList.push(this.elemSelect(item))
             item.type === 'SelectComponent' && FormItemList.push(this.elemSelectComponent(item))
-            item.type === 'Slot' && FormItemList.push(this.elemSolt(item))
+            item.type === 'Slot' && FormItemList.push(this.elemSoltComponent(item))
+            item.type === 'Upload' && FormItemList.push(this.elemUploadComponent(item))
         })
         return FormItemList
     }

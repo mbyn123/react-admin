@@ -10,6 +10,7 @@ var http = axios.create({
 http.interceptors.request.use(function (config) {
     config.headers['Token'] = getUserInfo() && getUserInfo().token
     config.headers['Username'] = getUserInfo() && getUserInfo().username
+    config.headers['Content-Type'] = "multipart/form-data;charset=UTF-8"
     return config;
 }, function (error) {
     // 对请求错误做些什么

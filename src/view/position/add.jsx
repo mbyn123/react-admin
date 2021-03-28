@@ -39,6 +39,12 @@ class PositionAdd extends Component {
                         required: true
                     },
                     {
+                        type:'Upload',
+                        label:'头像',
+                        name:'avatar',
+                        required:true
+                    },
+                    {
                         type: 'Input',
                         label: "职位名称",
                         name: "jobName",

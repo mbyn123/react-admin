@@ -9,3 +9,11 @@ export const requestData = (parmas) => {
     })
 }
 
+export const uploadToken = (data) => {
+    return http.request({
+        url: '/uploadIToken/',
+        method: 'POST',
+        data
+    })
+}
+
