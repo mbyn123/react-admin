@@ -18,7 +18,7 @@ class PositionAdd extends Component {
                 },
                 setFieldValue: {},
                 selectComponent: 'parentId',
-                editKey: '',
+                editKey: '', // 当前编辑项的id
                 formItem: [
                     // {
                     //     type: 'SelectComponent',
@@ -38,12 +38,12 @@ class PositionAdd extends Component {
                         name: "parentId",
                         required: true
                     },
-                    {
-                        type:'Upload',
-                        label:'头像',
-                        name:'avatar',
-                        required:true
-                    },
+                    // {
+                    //     type:'Upload',
+                    //     label:'头像',
+                    //     name:'avatar',
+                    //     required:true
+                    // },
                     {
                         type: 'Input',
                         label: "职位名称",

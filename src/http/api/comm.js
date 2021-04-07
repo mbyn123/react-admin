@@ -17,3 +17,13 @@ export const uploadToken = (data) => {
     })
 }
 
+
+
+export const upload = (data) => {
+    return http.request({
+        url: '/upload/',
+        method: 'POST',
+        data
+    })
+}
+

@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, Spin, message, Select } from "antd"
+import { Form, Button, Input, Radio, InputNumber, Spin, message, Select, DatePicker } from "antd"
 import { requestData } from "@/http/api/comm"
 import requestUrl from "@/http/api/requestUrl"
 import Selects from '@/components/Select'
 import UploadFile from '@/components/upload'
+import Editor from '@/components/Editor'
+
+import 'moment/locale/zh-cn';
+import locale from 'antd/es/date-picker/locale/zh_CN';
 
 const layout = {
     labelCol: { span: 2 },
@@ -23,7 +27,9 @@ class CustomForm extends Component {
                 'Select': '请选择',
                 'SelectComponent': '请选择',
                 'Slot': '请选择',
-                'Upload': '请上传'
+                'Upload': '请上传',
+                'Date': '请选择',
+                'Editor':'请输入'
             },
             loading: false
         }
@@ -166,7 +172,31 @@ class CustomForm extends Component {
     elemUploadComponent = (item) => {
         return (
             <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <UploadFile></UploadFile>            
+                <UploadFile></UploadFile>
+            </Form.Item>
+        )
+    }
+
+    elemcloumComponent = (item) => {
+        return (
+            <div className="form-cloum" key={item.label}>
+                <h4>{item.label}</h4>
+            </div>
+        )
+    }
+
+    elemDateComponent = (item) => {
+        return (
+            <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
+                <DatePicker format={item.format} picker={item.picker} locale={locale}></DatePicker>
+            </Form.Item>
+        )
+    }
+
+    elemEditorComponent = (item) => {
+        return (
+            <Form.Item label={item.label} rules={this.rules(item)}  name={item.name} key={item.name}>
+               <Editor></Editor>
             </Form.Item>
         )
     }
@@ -185,6 +215,9 @@ class CustomForm extends Component {
             item.type === 'SelectComponent' && FormItemList.push(this.elemSelectComponent(item))
             item.type === 'Slot' && FormItemList.push(this.elemSoltComponent(item))
             item.type === 'Upload' && FormItemList.push(this.elemUploadComponent(item))
+            item.type === 'cloum' && FormItemList.push(this.elemcloumComponent(item))
+            item.type === 'Date' && FormItemList.push(this.elemDateComponent(item))
+            item.type === 'Editor' && FormItemList.push(this.elemEditorComponent(item))
         })
         return FormItemList
     }
