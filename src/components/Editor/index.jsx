@@ -4,6 +4,9 @@ import { upload } from '@/http/api/comm'
 class Editors extends Component {
     constructor(props) {
         super(props)
+        this.state={
+            content:''
+        }
     }
     handleEditorChange = (value) => {
         console.log(value);
@@ -17,6 +20,15 @@ class Editors extends Component {
         }
         success(res.data.url) // 成功回调
 
+    }
+    static getDerivedStateFromProps (nextProps, prevState) {
+        let { value } = nextProps
+        if (value !== prevState.selectValue) { // 获取父组件的传值，比较是否改变
+            return {
+                content: value
+            }
+        }
+        return null
     }
     render () {
         const editorObj = {
@@ -47,7 +59,7 @@ class Editors extends Component {
                 inline={false}
                 selector='editorStateRef'  // 选择器
                 apiKey='官网上申请的key值'
-                initialValue={''}
+                initialValue={this.state.content}
                 init={{ ...editorObj }}
                 onEditorChange={this.handleEditorChange}
             />

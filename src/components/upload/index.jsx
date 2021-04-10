@@ -20,6 +20,17 @@ class UploadFile extends Component {
         this.getUploadToken()
     }
 
+    static getDerivedStateFromProps(nextProps, prevState) {
+        let { value } = nextProps
+        if (value !== prevState.selectValue) { // 获取父组件的传值，比较是否改变
+            return { 
+                imageUrl: value
+            }
+        }
+        return null
+    }
+
+
     // 获取七牛云Token
     getUploadToken = async () => {
         const { data: res } = await uploadToken({

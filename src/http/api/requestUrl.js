@@ -18,7 +18,12 @@ const requestUrl = {
     'positionDetailed':'/job/detailed/',
     
     // 职员
-    'staffAdd':'/staff/add/'
+    'staffAdd':'/staff/add/',
+    'staffList':'/staff/list/',
+    'staffStatus':'/staff/status/',
+    'staffListDelete':'/staff/delete/',
+    'staffEdit':'/staff/edit/',
+    'staffDetailed':'/staff/detailed/',
 
 }
 

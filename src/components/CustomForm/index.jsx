@@ -57,7 +57,7 @@ class CustomForm extends Component {
         }
 
         
-
+        console.log(2123123123132123123)
         this.setState({ loading: true })
         let { queryUrl, editKey, setFieldValue } = this.props.config
         let query = {
@@ -77,6 +77,7 @@ class CustomForm extends Component {
         }
         message.success(res.message)
         this.setState({ loading: false })
+        this.form.current.resetFields()
     }
 
 
@@ -175,7 +176,7 @@ class CustomForm extends Component {
     elemUploadComponent = (item) => {
         return (
             <Form.Item label={item.label} name={item.name} rules={this.rules(item)} key={item.name}>
-                <UploadFile></UploadFile>
+                <UploadFile labelInValue={item.labelInValue}></UploadFile>
             </Form.Item>
         )
     }

@@ -4,12 +4,14 @@ import { requestData } from "@/http/api/comm"
 import requestUrl from "@/http/api/requestUrl"
 import { message } from "antd"
 import { nation, face, education } from '@/utils/data'
+import moment from 'moment'
 
 class StaffAdd extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            id:'',
             selectList: [],
             config: {
                 queryUrl: 'staffAdd',// 接口地址
@@ -200,10 +202,50 @@ class StaffAdd extends Component {
         }
 
     }
+    componentDidMount () {
+        if (this.props.location.state) {
+            let { id } = this.props.location.state
+            this.setState({id})
+            this.getDepartmentDetailed(id)
+        }
+    }
+    getDepartmentDetailed = async (id) => {
+        const { data: res } = await requestData({ url: requestUrl['staffDetailed'], data: { id } }).catch(err => err)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            return
+        }
+        let data = res.data
+        let time = {
+            birthday:moment(data.birthday),
+            job_entry_date:moment(data.job_entry_date),
+            job_formal_date:data.job_formal_date?moment(data.job_formal_date):null,
+            job_quit_date:data.job_quit_date?moment(data.job_quit_date):null
+        }
+        this.setState({
+            config: {
+                ...this.state.config,
+                setFieldValue: {...data,...time},
+                // queryUrl: 'staffEdit',
+                // editKey: 'staff_id'
+            }
+        })
+    }
+
+    onEdit = async (query) => {
+        query.id = this.state.id
+      
+        const { data: res } = await requestData({ url: requestUrl['staffEdit'], data: query }).catch(err => err)
+        if (res.resCode !== 0) {
+            message.error(res.message)
+            return
+        }
+        message.success('编辑成功')
+    }
     render () {
         let { config } = this.state
         return (
-            <CustomForm config={config}></CustomForm>
+            <CustomForm config={config}  onSubmit={this.onEdit}></CustomForm>
         );
     }
 }
