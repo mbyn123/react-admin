@@ -16,7 +16,9 @@ const requestUrl = {
     'positionListDelete': '/job/delete/',
     'positionEdit':'/job/edit/',
     'positionDetailed':'/job/detailed/',
-
+    
+    // 职员
+    'staffAdd':'/staff/add/'
 
 }
 

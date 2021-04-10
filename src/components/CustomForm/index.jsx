@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Button, Input, Radio, InputNumber, Spin, message, Select, DatePicker } from "antd"
+import { Form, Button, Input, Radio, InputNumber, Spin, message, Select, DatePicker, Row, Col } from "antd"
 import { requestData } from "@/http/api/comm"
 import requestUrl from "@/http/api/requestUrl"
 import Selects from '@/components/Select'
@@ -11,7 +11,7 @@ import locale from 'antd/es/date-picker/locale/zh_CN';
 
 const layout = {
     labelCol: { span: 2 },
-    wrapperCol: { span: 10 },
+    wrapperCol: { span: 22 },
 };
 
 class CustomForm extends Component {
@@ -29,7 +29,7 @@ class CustomForm extends Component {
                 'Slot': '请选择',
                 'Upload': '请上传',
                 'Date': '请选择',
-                'Editor':'请输入'
+                'Editor': '请输入'
             },
             loading: false
         }
@@ -42,6 +42,7 @@ class CustomForm extends Component {
         }
     }
     onFinish = async (val) => {
+        console.log(val);
         let key = this.props.config.selectComponent
 
         if (key && val[key] && Object.prototype.toString.call(val[key]) === '[object Object]') {
@@ -54,6 +55,8 @@ class CustomForm extends Component {
             this.props.onSubmit(val)
             return
         }
+
+        
 
         this.setState({ loading: true })
         let { queryUrl, editKey, setFieldValue } = this.props.config
@@ -195,9 +198,35 @@ class CustomForm extends Component {
 
     elemEditorComponent = (item) => {
         return (
-            <Form.Item label={item.label} rules={this.rules(item)}  name={item.name} key={item.name}>
-               <Editor></Editor>
+            <Form.Item label={item.label} rules={this.rules(item)} name={item.name} key={item.name}>
+                <Editor></Editor>
             </Form.Item>
+        )
+    }
+
+    elemInlineComponent = (item) => {
+        return (
+            <Row key={item.name}>
+                <Col span={2}>
+                    <div className="ant-form-item" style={{ textAlign: 'right' }}>
+                        <div className="ant-form-item-label">
+                            <label className={item.required ? "ant-form-item-required" : ''}>{item.label}</label>
+                        </div>
+                    </div>
+                </Col>
+                <Col span={22}>
+                    <Row>
+
+                        {
+                            item.InlineItem.map(elem => {
+                                return <Col span={3} key={elem.name} className="inline-form">{this.createControl(elem)}</Col>
+                            })
+                        }
+
+                    </Row>
+                </Col>
+            </Row>
+
         )
     }
 
@@ -205,22 +234,27 @@ class CustomForm extends Component {
     initialize = () => {
         let { formItem } = this.props.config
         if (!formItem || (formItem && formItem.length === 0)) { return false }
-        let FormItemList = []
-        formItem.forEach(item => {
-            item.type === 'Input' && FormItemList.push(this.elemInput(item))
-            item.type === 'InputNumber' && FormItemList.push(this.elemInputNumber(item))
-            item.type === 'Radio' && FormItemList.push(this.elemRadio(item))
-            item.type === 'TextArea' && FormItemList.push(this.elemTextArea(item))
-            item.type === 'Select' && FormItemList.push(this.elemSelect(item))
-            item.type === 'SelectComponent' && FormItemList.push(this.elemSelectComponent(item))
-            item.type === 'Slot' && FormItemList.push(this.elemSoltComponent(item))
-            item.type === 'Upload' && FormItemList.push(this.elemUploadComponent(item))
-            item.type === 'cloum' && FormItemList.push(this.elemcloumComponent(item))
-            item.type === 'Date' && FormItemList.push(this.elemDateComponent(item))
-            item.type === 'Editor' && FormItemList.push(this.elemEditorComponent(item))
-        })
+
+        let FormItemList = formItem.map(item => this.createControl(item))
         return FormItemList
     }
+
+    createControl = (item) => {
+        if (item.type === 'Input') return this.elemInput(item)
+        if (item.type === 'Radio') return this.elemRadio(item)
+        if (item.type === 'TextArea') return this.elemTextArea(item)
+        if (item.type === 'Select') return this.elemSelect(item)
+        if (item.type === 'InputNumber') return this.elemInputNumber(item)
+        if (item.type === 'SelectComponent') return this.elemSelectComponent(item)
+        if (item.type === 'Slot') return this.elemSoltComponent(item)
+        if (item.type === 'Upload') return this.elemUploadComponent(item)
+        if (item.type === 'cloum') return this.elemcloumComponent(item)
+        if (item.type === 'Date') return this.elemDateComponent(item)
+        if (item.type === 'Editor') return this.elemEditorComponent(item)
+        if (item.type === 'Inline') return this.elemInlineComponent(item)
+    }
+
+
 
     render () {
         let { initialValues } = this.props.config

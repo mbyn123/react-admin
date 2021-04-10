@@ -49,7 +49,8 @@ class Selects extends PureComponent {
     selectChange = (value) => {
         let { name, onChange } = this.props
         this.setState({ selectValue: value })
-        onChange({ [name]: value })
+        // onChange({ [name]: value })
+        onChange(value)
     }
 
     render() {
