@@ -26,7 +26,7 @@ class CustomForm extends Component {
         }
     }
 
-    // 监听props是否变化
+    // 监听props是否变化了
     componentDidUpdate() {
         if (this.props.config.setFieldValue) {
             this.form.current.setFieldsValue(this.props.config.setFieldValue)
