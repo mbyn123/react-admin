@@ -18,6 +18,7 @@ class Selects extends PureComponent {
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
+        
         let { name, value } = nextProps
         if (Object.prototype.toString.call(value) === '[object Object]') {
             value = value[name]
@@ -48,7 +49,8 @@ class Selects extends PureComponent {
     selectChange = (value) => {
         let { name, onChange } = this.props
         this.setState({ selectValue: value })
-        onChange({ [name]: value })
+        // onChange({ [name]: value })
+        onChange(value)
     }
 
     render() {
